@@ -1,10 +1,10 @@
-package com.andre.selenium.testes;
+package com.andre.selenium.testes.google;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.andre.selenium.SeleniumTest;
-import com.andre.selenium.telas.TelaBuscaGoogle;
+import com.andre.selenium.telas.google.TelaBuscaGoogle;
 
 public class BuscaGoogleTeste extends SeleniumTest {
 

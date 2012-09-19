@@ -1,4 +1,4 @@
-package com.andre.selenium.telas;
+package com.andre.selenium.telas.google;
 
 import org.openqa.selenium.WebDriver;
 

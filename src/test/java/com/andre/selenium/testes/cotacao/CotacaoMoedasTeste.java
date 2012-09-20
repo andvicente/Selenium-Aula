@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.andre.selenium.SeleniumTest;
+import com.andre.selenium.SeleniumWebDriver;
 import com.andre.selenium.dominio.Moeda;
 import com.andre.selenium.telas.cotacao.TelaCotacoesUOL;
 import com.andre.selenium.telas.cotacao.TelaHistoricoMoeda;
@@ -15,10 +16,12 @@ import com.andre.selenium.telas.cotacao.TelaHistoricoMoeda;
 public class CotacaoMoedasTeste extends SeleniumTest {
 
 	TelaCotacoesUOL telaCotacoes;
+	SeleniumWebDriver selenium;
 
 	@Before
 	public void prepararCotacoes() {
-		this.telaCotacoes = new TelaCotacoesUOL(driver);
+		this.selenium = new SeleniumWebDriver(driver);
+		this.telaCotacoes = new TelaCotacoesUOL(selenium);
 		this.telaCotacoes.abrir();
 	}
 
@@ -47,8 +50,8 @@ public class CotacaoMoedasTeste extends SeleniumTest {
 	@Test
 	public void testeCotacaoMaisAltaDolarUltimos20dias() {
 		telaCotacoes.consultarCotacaoDolarComercial();
-		TelaHistoricoMoeda historicoMoeda = new TelaHistoricoMoeda(driver);
-		historicoMoeda.qualCotacaoDolarMaisAltaVenda();
+		TelaHistoricoMoeda historicoMoeda = new TelaHistoricoMoeda(selenium);
+		System.out.println(historicoMoeda.getCotacaoMoedaMaisBaixaMaisAlta());
 
 	}
 }

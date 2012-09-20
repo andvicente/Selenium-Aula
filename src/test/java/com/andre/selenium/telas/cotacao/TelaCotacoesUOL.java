@@ -1,7 +1,5 @@
 package com.andre.selenium.telas.cotacao;
 
-import org.openqa.selenium.WebDriver;
-
 import com.andre.selenium.SeleniumWebDriver;
 import com.andre.selenium.dominio.Moeda;
 
@@ -10,8 +8,8 @@ public class TelaCotacoesUOL {
 	private SeleniumWebDriver selenium;
 	private static final String URL = "http://economia.uol.com.br/cotacoes/cambio.jhtm";
 
-	public TelaCotacoesUOL(WebDriver driver) {
-		this.selenium = new SeleniumWebDriver(driver);
+	public TelaCotacoesUOL(SeleniumWebDriver selenium) {
+		this.selenium = selenium;
 	}
 
 	public void abrir() {

@@ -1,6 +1,7 @@
 package com.andre.selenium.telas.cotacao;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -22,7 +23,8 @@ public class TelaHistoricoMoeda {
 		this.selenium = selenium;
 	}
 
-	public String getCotacaoMoedaMaisBaixaMaisAlta() {
+	@SuppressWarnings("rawtypes")
+	public ArrayList getCotacaoMoedaMaisBaixaMaisAlta() {
 		selenium.clickByLinkText(localizarHistoricoMoeda());
 		selenium.selectFrame(localizarFrameHistorico());
 
@@ -31,18 +33,18 @@ public class TelaHistoricoMoeda {
 		String diaHoje = formatadorData.format(hoje);
 		selenium.type(localizarDataFinal(), diaHoje);
 		selenium.click(localizarBotaoOKIntervaloData());
-		selenium.selectByVisibleText(localizarComboQtdeLinhas(), "100 Linhas");
+		selenium.selectByVisibleText(localizarComboQtdeLinhas(), "50 Linhas");
 
-		Map<String, String> cotacoes = getCotacoesMoedaHistoricoUltimos100dias();
+		Map<String, String> cotacoes = getCotacoesMoedaHistoricoUltimos50dias();
 		Map<String, String> cotacoesOrdenadas = sortByComparator(cotacoes);
 		return getCotacaoMaisAltaMaisBaixa(cotacoesOrdenadas);
 
 	}
 
-	private Map<String, String> getCotacoesMoedaHistoricoUltimos100dias() {
+	private Map<String, String> getCotacoesMoedaHistoricoUltimos50dias() {
 		Map<String, String> cotacoes = new HashMap<String, String>();
 
-		for (int i = 2; i <= 51; i++) {
+		for (int i = 1; i <= 50; i++) {
 			String data = getCelulaTabelaHistoricoMoeda(i, 1);
 			String venda = getCelulaTabelaHistoricoMoeda(i, 3);
 			cotacoes.put(data, venda);
@@ -58,11 +60,13 @@ public class TelaHistoricoMoeda {
 	 * @param cotacoesOrdenadas
 	 * @return String (Cotacao Mais Baixa e Mais Alta)
 	 */
-	private String getCotacaoMaisAltaMaisBaixa(
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private ArrayList getCotacaoMaisAltaMaisBaixa(
 			Map<String, String> cotacoesOrdenadas) {
 		int i = 0;
 		String cotacaoMaisAlta = "";
 		String cotacaoMaisBaixa = "";
+		ArrayList cotacaoMaisBaixaAlta = new ArrayList();
 		for (Map.Entry entry : cotacoesOrdenadas.entrySet()) {
 			if (i == 0)
 				cotacaoMaisBaixa = entry.getKey() + " " + entry.getValue();
@@ -70,8 +74,9 @@ public class TelaHistoricoMoeda {
 				cotacaoMaisAlta = entry.getKey() + " " + entry.getValue();
 			i++;
 		}
-		return cotacaoMaisBaixa + " " + cotacaoMaisAlta;
-
+		cotacaoMaisBaixaAlta.add(cotacaoMaisBaixa);
+		cotacaoMaisBaixaAlta.add(cotacaoMaisAlta);
+		return cotacaoMaisBaixaAlta;
 	}
 
 	private String getCelulaTabelaHistoricoMoeda(int nLinha, int nColuna) {
@@ -114,7 +119,7 @@ public class TelaHistoricoMoeda {
 
 		List list = new LinkedList(unsortMap.entrySet());
 
-		System.out.print("Ordenando Cotações...");
+		System.out.print("Ordenando Cotações... \n");
 		// sort list based on comparator
 		Collections.sort(list, new Comparator() {
 			public int compare(Object o1, Object o2) {
@@ -123,7 +128,7 @@ public class TelaHistoricoMoeda {
 			}
 		});
 
-		System.out.print("FIM Ordenação Cotações...");
+		System.out.print("FIM Ordenação Cotações... \n");
 
 		// put sorted list into map again
 		Map sortedMap = new LinkedHashMap();

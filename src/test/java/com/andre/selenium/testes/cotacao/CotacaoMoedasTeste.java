@@ -2,6 +2,7 @@ package com.andre.selenium.testes.cotacao;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import org.junit.Before;
@@ -25,6 +26,12 @@ public class CotacaoMoedasTeste extends SeleniumTest {
 		this.telaCotacoes.abrir();
 	}
 
+	/**
+	 * Compara a cotação do Dolar, Peso e Euro e verifica se o Euro é a que
+	 * possui a cotação mais alta.
+	 * 
+	 * @throws ParseException
+	 */
 	@Test
 	public void testeCotacaoDiariaDolarPesoEuro() throws ParseException {
 		Moeda peso = telaCotacoes.consultarCotacaoPesoArgentino();
@@ -47,11 +54,33 @@ public class CotacaoMoedasTeste extends SeleniumTest {
 			return false;
 	}
 
+	/**
+	 * Verifica a cotação do dólar comercial (Venda) mais baixa e mais alta dos
+	 * últimos 50 dias
+	 */
 	@Test
-	public void testeCotacaoMaisAltaDolarUltimos20dias() {
+	public void testeCotacaoMaisBaixaAltaDolarUltimos50dias() {
 		telaCotacoes.consultarCotacaoDolarComercial();
 		TelaHistoricoMoeda historicoMoeda = new TelaHistoricoMoeda(selenium);
-		System.out.println(historicoMoeda.getCotacaoMoedaMaisBaixaMaisAlta());
+		ArrayList cotacaoMaisBaixaMaisAlta = historicoMoeda
+				.getCotacaoMoedaMaisBaixaMaisAlta();
 
+		selenium.takeScreenshot();
+
+		assertEquals("14/09/2012 2,0111", cotacaoMaisBaixaMaisAlta.get(0));
+		assertEquals("02/08/2012 2,0507", cotacaoMaisBaixaMaisAlta.get(1));
+		System.out.println("Cotação mais BAIXA: "
+				+ cotacaoMaisBaixaMaisAlta.get(0));
+		System.out.println("Cotação mais ALTA:  "
+				+ cotacaoMaisBaixaMaisAlta.get(1));
+	}
+
+	/**
+	 * Dado que a cota para viagens para o exterior é de $500. Consulte a cota
+	 * em R$ (reais) utilizando o "Conversor de Moedas"
+	 */
+	@Test
+	public void testeConsultaLimiteCotaViagemExteriorEmReais() {
+		// TODO: Implementar Caso de Teste (Limite Cota Viagem Exterior)
 	}
 }

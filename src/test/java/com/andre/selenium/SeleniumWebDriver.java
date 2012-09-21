@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
@@ -52,24 +53,84 @@ public class SeleniumWebDriver {
 		element.sendKeys(text);
 	}
 
+	/**
+	 * Clicar em um elemento da tela
+	 * 
+	 * @param locator
+	 */
 	public void click(String locator) {
 		waitForVisible(locator);
 		waitForClickable(locator);
 		element(locator).click();
 	}
 
+	/**
+	 * Clicar em um link pelo seu texto
+	 * 
+	 * @param text
+	 */
 	public void clickByLinkText(String text) {
 		elementByLinkText(text).click();
 	}
 
+	/**
+	 * Marcar um Checkbox
+	 * 
+	 * @param locator
+	 */
+	public void check(String locator) {
+		WebElement element = element(locator);
+		if (!element.isSelected()) {
+			element.click();
+			waitForChecked(locator);
+		}
+	}
+
+	/**
+	 * Desmarcar um Checkbox
+	 * 
+	 * @param locator
+	 */
+	public void uncheck(String locator) {
+		WebElement element = element(locator);
+		if (element.isSelected()) {
+			element.click();
+			waitForNotChecked(locator);
+		}
+	}
+
+	/**
+	 * Pega o texto de um elemento
+	 * 
+	 * @param locator
+	 * @return
+	 */
 	public String getText(String locator) {
 		waitForElementPresent(locator);
 		waitForVisible(locator);
 		return element(locator).getText();
 	}
 
+	/**
+	 * Pega o texto de uma célula de uma tabela
+	 * 
+	 * @param nLinha
+	 * @param nColuna
+	 * @return
+	 */
 	public String getTextTableCell(int nLinha, int nColuna) {
 		return element(locateTableCell(nLinha, nColuna)).getText();
+	}
+
+	/**
+	 * Pega o texto de uma célula de uma tabela com id específico
+	 * 
+	 * @param nLinha
+	 * @param nColuna
+	 * @return
+	 */
+	public String getTextTableCell(String id, int nLinha, int nColuna) {
+		return element(locateTableCellwithID(id, nLinha, nColuna)).getText();
 	}
 
 	private String locateTableCell(int nLinha, int nColuna) {
@@ -81,8 +142,16 @@ public class SeleniumWebDriver {
 		return locator.toString();
 	}
 
+	private String locateTableCellwithID(String id, int nLinha, int nColuna) {
+		StringBuilder locator = new StringBuilder().append("table#" + id)
+				.append(" ").append("tr:nth-of-type(").append(nLinha)
+				.append(")").append(" > ").append("td:nth-of-type(")
+				.append(nColuna).append(")");
+		return locator.toString();
+	}
+
 	/**
-	 * Selecionar valor de um combo-box pelo texto
+	 * Selecionar um item de um combo-box pelo texto
 	 * 
 	 * @param locator
 	 * @param visibleText
@@ -93,13 +162,23 @@ public class SeleniumWebDriver {
 		new Select(element(locator)).selectByVisibleText(visibleText);
 	}
 
+	/**
+	 * Seleciona um item de um combo-box pelo atributo "value"
+	 * 
+	 * @param locator
+	 * @param value
+	 */
 	public void selectByValue(String locator, String value) {
 		waitForVisible(locator);
 		waitForClickable(locator);
 		new Select(element(locator)).selectByValue(value);
 	}
 
-	// Wait for something...
+	/**
+	 * Espera para que o elemento seja clicável
+	 * 
+	 * @param locator
+	 */
 	private void waitForClickable(String locator) {
 		defaultWait.until(ExpectedConditions.elementToBeClickable(By
 				.cssSelector(locator)));
@@ -107,6 +186,11 @@ public class SeleniumWebDriver {
 				element(locator));
 	}
 
+	/**
+	 * Espera para que o elemento esteja visível na tela
+	 * 
+	 * @param locator
+	 */
 	public void waitForVisible(final String locator) {
 		defaultWait.until(new ExpectedCondition<Boolean>() {
 			public Boolean apply(WebDriver driver) {
@@ -116,6 +200,11 @@ public class SeleniumWebDriver {
 		});
 	}
 
+	/**
+	 * Espera para que o elemento esteja presente na tela
+	 * 
+	 * @param locator
+	 */
 	public void waitForElementPresent(final String locator) {
 		defaultWait.until(new ExpectedCondition<WebElement>() {
 			public WebElement apply(WebDriver driver) {
@@ -124,6 +213,43 @@ public class SeleniumWebDriver {
 		});
 	}
 
+	public void waitForChecked(final String locator) {
+		defaultWait.until(new ExpectedCondition<Boolean>() {
+			public Boolean apply(WebDriver driver) {
+				return element(locator).isSelected();
+			}
+		});
+	}
+
+	public void waitForNotChecked(final String locator) {
+		defaultWait.until(new ExpectedCondition<Boolean>() {
+			public Boolean apply(WebDriver driver) {
+				return !element(locator).isSelected();
+			}
+		});
+	}
+
+	public void waitForTextPresent(final String text) {
+		defaultWait.until(new ExpectedCondition<Boolean>() {
+			public Boolean apply(WebDriver driver) {
+				return driver.getPageSource().contains(text);
+			}
+		});
+	}
+
+	public void waitForText(final String locator, final String text) {
+		defaultWait.until(new ExpectedCondition<Boolean>() {
+			public Boolean apply(WebDriver driver) {
+				return text.equals(element(locator).getText());
+			}
+		});
+	}
+
+	/**
+	 * Assert para verificar o título da página
+	 * 
+	 * @param title
+	 */
 	public void assertTitle(String title) {
 		assertEquals("O titulo da pagina nao é o esperado", title,
 				driver.getTitle());
@@ -140,6 +266,8 @@ public class SeleniumWebDriver {
 	public void selectFrame(String id) {
 		driver.switchTo().frame(id);
 	}
+
+	// Assertivas
 
 	public void assertText(final String locator, final String value) {
 		defaultWait.until(new ExpectedCondition<Boolean>() {
@@ -252,8 +380,10 @@ public class SeleniumWebDriver {
 		WebDriver augmentedDriver = new Augmenter().augment(driver);
 		File screenshot = ((TakesScreenshot) augmentedDriver)
 				.getScreenshotAs(OutputType.FILE);
+		Date data = new Date();
 		try {
-			FileUtils.copyFile(screenshot, new File("./seleniumTeste.jpg"));
+			FileUtils.copyFile(screenshot, new File("./screenshot_" + data
+					+ ".png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
